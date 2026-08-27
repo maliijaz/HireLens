@@ -11,12 +11,6 @@ cp .env.example .env
 streamlit run app.py
 ```
 
-To regenerate the sample PDFs used for manual testing:
-
-```bash
-python generate_samples.py
-```
-
 ## Making changes
 
 1. Fork the repo and create a branch off `main`.
