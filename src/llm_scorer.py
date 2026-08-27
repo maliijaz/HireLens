@@ -3,6 +3,11 @@ import json
 from groq import Groq
 from .models import JobDescription, Resume, CandidateScore
 
+
+def _clamp(value: float, lo: float, hi: float) -> float:
+    return max(lo, min(hi, value))
+
+
 _SCORING_RUBRIC = """
 ## Scoring Rubric (each dimension 0–10)
 
@@ -48,7 +53,7 @@ def _build_system_prompt(jd: JobDescription) -> str:
 **Title:** {jd.title}
 **Required Skills:** {skills_req}
 **Preferred Skills:** {skills_pref}
-**Experience Required:** {jd.experience_years} years
+**Experience Required:** {jd.experience_years if jd.experience_years is not None else 'Not specified'} years
 **Education Required:** {jd.education_requirement or 'Not specified'}
 
 **Responsibilities:**
@@ -91,16 +96,16 @@ def score_candidate(
 
     data = json.loads(response.choices[0].message.content)
 
-    llm_overall = float(data["overall_score"])
+    llm_overall = _clamp(float(data["overall_score"]), 0.0, 10.0)
     raw_weighted = 0.3 * tfidf_score + 0.7 * (llm_overall / 10.0)
     weighted_final = round(raw_weighted * 100, 1)
 
     return CandidateScore(
         resume=resume,
         tfidf_score=tfidf_score,
-        skills_score=float(data["skills_score"]),
-        experience_score=float(data["experience_score"]),
-        education_score=float(data["education_score"]),
+        skills_score=_clamp(float(data["skills_score"]), 0.0, 10.0),
+        experience_score=_clamp(float(data["experience_score"]), 0.0, 10.0),
+        education_score=_clamp(float(data["education_score"]), 0.0, 10.0),
         overall_llm_score=llm_overall,
         weighted_final_score=weighted_final,
         reasoning=data["reasoning"],

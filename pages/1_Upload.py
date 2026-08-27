@@ -1,14 +1,22 @@
+import json
 import os
 import streamlit as st
-from groq import Groq
+from groq import Groq, GroqError
+from pydantic import ValidationError
 from src.parsers import parse_pdf, parse_job_description, parse_resume
 from src.ml_scorer import compute_tfidf_scores
 from src.llm_scorer import score_all_candidates
 from src.bias_detector import audit_jd_language, check_score_fairness
-from src.database import save_session
+from src.database import init_db, save_session
+
+# Errors that mean "the AI step failed" rather than a bug in this app —
+# surfaced to the user as a friendly message instead of a raw traceback.
+PIPELINE_ERRORS = (GroqError, json.JSONDecodeError, KeyError, ValueError, ValidationError)
 
 st.set_page_config(page_title="Upload — AI Hiring Assistant", page_icon="📤", layout="wide")
 st.title("Upload Job Description & Resumes")
+
+init_db()
 
 api_key = os.getenv("GROQ_API_KEY", "")
 if not api_key:
@@ -63,7 +71,7 @@ if analyze_clicked:
     jd_raw_text = ""
     if jd_file:
         file_bytes = jd_file.read()
-        jd_raw_text = parse_pdf(file_bytes) if jd_file.name.endswith(".pdf") else file_bytes.decode("utf-8", errors="replace")
+        jd_raw_text = parse_pdf(file_bytes) if jd_file.name.lower().endswith(".pdf") else file_bytes.decode("utf-8", errors="replace")
     elif jd_text_input.strip():
         jd_raw_text = jd_text_input.strip()
     else:
@@ -78,41 +86,49 @@ if analyze_clicked:
     with progress_container:
         st.info("Starting analysis... this may take a moment.")
 
-        # Step 1: Parse JD
-        with st.spinner("Parsing job description..."):
-            jd = parse_job_description(jd_raw_text, client)
-        st.success(f"Job Description parsed: **{jd.title}**")
+        try:
+            # Step 1: Parse JD
+            with st.spinner("Parsing job description..."):
+                jd = parse_job_description(jd_raw_text, client)
+            st.success(f"Job Description parsed: **{jd.title}**")
 
-        # Step 2: Parse resumes
-        resumes = []
-        resume_progress = st.progress(0, text="Parsing resumes...")
-        for i, rf in enumerate(resume_files):
-            resume = parse_resume(rf.read(), rf.name, client)
-            resumes.append(resume)
-            resume_progress.progress((i + 1) / len(resume_files), text=f"Parsed {resume.candidate_name}")
-        resume_progress.empty()
-        st.success(f"{len(resumes)} resume(s) parsed.")
+            # Step 2: Parse resumes
+            resumes = []
+            resume_progress = st.progress(0, text="Parsing resumes...")
+            for i, rf in enumerate(resume_files):
+                resume = parse_resume(rf.read(), rf.name, client)
+                resumes.append(resume)
+                resume_progress.progress((i + 1) / len(resume_files), text=f"Parsed {resume.candidate_name}")
+            resume_progress.empty()
+            st.success(f"{len(resumes)} resume(s) parsed.")
 
-        # Step 3: TF-IDF baseline
-        with st.spinner("Computing TF-IDF similarity scores..."):
-            tfidf_scores = compute_tfidf_scores(jd.raw_text, [r.raw_text for r in resumes])
-        st.success("TF-IDF scores computed.")
+            # Step 3: TF-IDF baseline
+            with st.spinner("Computing TF-IDF similarity scores..."):
+                tfidf_scores = compute_tfidf_scores(jd.raw_text, [r.raw_text for r in resumes])
+            st.success("TF-IDF scores computed.")
 
-        # Step 4: LLM scoring
-        score_progress = st.progress(0, text="Scoring candidates with AI...")
+            # Step 4: LLM scoring
+            score_progress = st.progress(0, text="Scoring candidates with AI...")
 
-        def on_progress(done, total, name):
-            score_progress.progress(done / total, text=f"Scored {name} ({done}/{total})")
+            def on_progress(done, total, name):
+                score_progress.progress(done / total, text=f"Scored {name} ({done}/{total})")
 
-        scores = score_all_candidates(jd, resumes, tfidf_scores, client, model=model_choice, progress_callback=on_progress)
-        score_progress.empty()
-        st.success(f"All {len(scores)} candidates scored and ranked.")
+            scores = score_all_candidates(jd, resumes, tfidf_scores, client, model=model_choice, progress_callback=on_progress)
+            score_progress.empty()
+            st.success(f"All {len(scores)} candidates scored and ranked.")
 
-        # Step 5: Bias audit
-        with st.spinner("Running bias audit..."):
-            jd_audit = audit_jd_language(jd, client)
-            fairness = check_score_fairness(scores)
-        st.success("Bias audit complete.")
+            # Step 5: Bias audit
+            with st.spinner("Running bias audit..."):
+                jd_audit = audit_jd_language(jd, client)
+                fairness = check_score_fairness(scores)
+            st.success("Bias audit complete.")
+        except PIPELINE_ERRORS as e:
+            st.error(
+                f"Analysis failed while calling the AI model ({type(e).__name__}: {e}). "
+                "This is usually a transient Groq API issue (rate limit, timeout, or an "
+                "unexpected response format) — please try again."
+            )
+            st.stop()
 
         # Step 6: Persist
         st.session_state.jd = jd

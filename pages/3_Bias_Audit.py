@@ -1,3 +1,4 @@
+import re
 import plotly.express as px
 import streamlit as st
 
@@ -49,7 +50,6 @@ else:
         st.markdown("**Highlighted Job Description (flagged terms bolded):**")
         highlighted = jd.raw_text
         for f in jd_audit.flags:
-            import re
             highlighted = re.sub(
                 r"\b(" + re.escape(f.phrase) + r")\b",
                 r"**\1**",
