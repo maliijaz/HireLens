@@ -19,9 +19,9 @@ class PDF(FPDF):
                 if line == "":
                     self.ln(2)
                 else:
-                    self.multi_cell(W, 5, line)
+                    self.multi_cell(W, 5, line, new_x="LMARGIN", new_y="NEXT")
         else:
-            self.multi_cell(W, 5, body)
+            self.multi_cell(W, 5, body, new_x="LMARGIN", new_y="NEXT")
         self.ln(4)
 
     def name_block(self, name: str, contact: str):
