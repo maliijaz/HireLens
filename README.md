@@ -2,9 +2,11 @@
 
 An end-to-end AI-powered tool that helps hiring teams make faster, fairer shortlisting decisions. Built with Python, Streamlit, and the Groq API (free tier).
 
+This project is open source under the [MIT License](LICENSE) — contributions are welcome.
+
 ## Features
 
-- **Hybrid ML + LLM scoring** — TF-IDF keyword matching (scikit-learn) combined with Llama 3 semantic scoring for robust, explainable rankings
+- **Hybrid ML + LLM scoring** — TF-IDF keyword matching (scikit-learn) combined with Llama 3 semantic scoring (via Groq) for robust, explainable rankings
 - **Structured extraction** — LLM parses job descriptions and resumes into structured data automatically
 - **Multi-dimension scoring** — Skills, Experience, Education scored separately with full reasoning
 - **Bias audit** — Flags exclusionary/gendered language in job descriptions and checks score fairness across name-associated demographic groups
@@ -13,7 +15,7 @@ An end-to-end AI-powered tool that helps hiring teams make faster, fairer shortl
 
 ## Scoring Formula
 
-```
+```text
 weighted_final_score = normalize(0.3 × tfidf_score + 0.7 × llm_overall_score)
 ```
 
@@ -25,14 +27,13 @@ TF-IDF catches keyword matching; the LLM catches semantic fit and experience dep
 
 ```bash
 pip install -r requirements.txt
-python -m spacy download en_core_web_sm
 ```
 
 ### 2. Configure API key
 
 ```bash
 cp .env.example .env
-# Edit .env and add your Anthropic API key
+# Edit .env and add your Groq API key (free tier: https://console.groq.com/keys)
 ```
 
 ### 3. Run
@@ -43,7 +44,7 @@ streamlit run app.py
 
 ## Project Structure
 
-```
+```text
 ├── app.py                   # Streamlit entry point + session sidebar
 ├── pages/
 │   ├── 1_Upload.py          # JD + resume upload, full analysis pipeline
@@ -51,9 +52,9 @@ streamlit run app.py
 │   └── 3_Bias_Audit.py      # JD language audit + score fairness check
 ├── src/
 │   ├── models.py            # Pydantic data models
-│   ├── parsers.py           # PDF parsing + Claude structured extraction
+│   ├── parsers.py           # PDF parsing + Groq (Llama 3) structured extraction
 │   ├── ml_scorer.py         # TF-IDF cosine similarity baseline
-│   ├── llm_scorer.py        # Claude API scoring with prompt caching
+│   ├── llm_scorer.py        # Groq (Llama 3) API scoring
 │   ├── bias_detector.py     # Bias wordlist + statistical fairness test
 │   └── database.py          # SQLite session CRUD
 ├── requirements.txt
@@ -62,19 +63,22 @@ streamlit run app.py
 
 ## Technical Highlights
 
-### Prompt Caching
-The job description + scoring rubric system prompt is cached across all resume scoring calls in a session. For a batch of 10 resumes, only the first call pays full token cost — the rest get ~80% cheaper cache hits.
+### Fast, Free-Tier Inference
+
+Scoring calls run against Groq's LPU-based API using Llama 3 models (`llama-3.3-70b-versatile` for scoring quality, `llama-3.1-8b-instant` for fast structured extraction), which keeps a full batch analysis fast and free-tier friendly.
 
 ### Bias Detection
-- **JD Language Audit:** Checks for masculine-coded words (Gaucher et al., 2011) and exclusionary phrasing, then uses Claude for nuanced tone assessment
+
+- **JD Language Audit:** Checks for masculine-coded words (Gaucher et al., 2011) and exclusionary phrasing, then uses Llama 3 (via Groq) for nuanced tone assessment
 - **Score Fairness:** Uses Welch's t-test to detect statistically significant score disparity between name-associated demographic groups (Bertrand & Mullainathan, 2004)
 
 ### Hybrid Scoring Rationale
-| Method | Strength | Weakness |
-|---|---|---|
-| TF-IDF | Fast, reproducible, keyword coverage | Misses semantic meaning |
-| LLM | Semantic depth, reasoning, context | Expensive at scale, can hallucinate |
-| **Hybrid** | Best of both | — |
+
+| Method     | Strength                             | Weakness                             |
+| ---------- | ------------------------------------- | ------------------------------------- |
+| TF-IDF     | Fast, reproducible, keyword coverage  | Misses semantic meaning               |
+| LLM        | Semantic depth, reasoning, context    | Expensive at scale, can hallucinate   |
+| **Hybrid** | Best of both                          | —                                      |
 
 ## Usage
 
@@ -89,3 +93,11 @@ The job description + scoring rubric system prompt is cached across all resume s
 ## Disclaimer
 
 This tool is designed to assist human reviewers, not replace them. Hiring decisions must comply with applicable employment law. The bias audit highlights patterns for review — it is not a legal compliance tool.
+
+## Contributing
+
+Issues and pull requests are welcome. For anything non-trivial, please open an issue first to discuss the change. See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup and guidelines.
+
+## License
+
+MIT — see [LICENSE](LICENSE) for details.

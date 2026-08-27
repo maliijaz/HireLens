@@ -1,7 +1,6 @@
 streamlit>=1.35
 groq>=0.9
 pdfplumber>=0.10
-spacy>=3.7
 scikit-learn>=1.4
 pydantic>=2.0
 python-dotenv>=1.0
@@ -9,3 +8,4 @@ plotly>=5.20
 openpyxl>=3.1
 scipy>=1.13
 pandas>=2.2
+fpdf2>=2.7

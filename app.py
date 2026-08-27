@@ -24,7 +24,7 @@ if "fairness" not in st.session_state:
 # ── Sidebar: session history ──────────────────────────────────────────────────
 with st.sidebar:
     st.title("AI Hiring Assistant")
-    st.caption("Powered by Claude + sklearn")
+    st.caption("Powered by Groq (Llama 3) + sklearn")
     st.divider()
 
     st.subheader("Saved Sessions")
@@ -63,10 +63,10 @@ st.markdown(
     4. **Export** — Download the ranked shortlist as CSV or Excel
 
     ### What makes this different
-    - **Hybrid scoring**: TF-IDF keyword matching (sklearn) + Claude semantic scoring
+    - **Hybrid scoring**: TF-IDF keyword matching (sklearn) + Groq Llama 3 semantic scoring
     - **Explainable results**: Every score comes with per-dimension breakdown and reasoning
     - **Bias audit**: Flags exclusionary JD language and checks score fairness across name-associated demographics
-    - **Prompt caching**: API costs drop ~80% when scoring large batches
+    - **Fast inference**: Groq's LPU-based API returns LLM scores in a fraction of the time of typical LLM providers
 
     ---
     Use the **sidebar** to navigate to Upload or load a previous session.
