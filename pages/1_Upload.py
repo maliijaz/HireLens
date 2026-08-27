@@ -65,7 +65,7 @@ if resume_files:
 st.divider()
 
 # ── Analyze Button ────────────────────────────────────────────────────────────
-analyze_clicked = st.button("Analyze Candidates", type="primary", use_container_width=True)
+analyze_clicked = st.button("Analyze Candidates", type="primary", width="stretch")
 
 if analyze_clicked:
     jd_raw_text = ""

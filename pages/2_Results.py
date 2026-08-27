@@ -45,7 +45,7 @@ fig.update_layout(
     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
     height=400,
 )
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
 
 # ── Final score ranking chart ─────────────────────────────────────────────────
 st.subheader("Overall Ranking")
@@ -59,7 +59,7 @@ rank_fig = px.bar(
     range_color=[0, 100],
 )
 rank_fig.update_layout(height=max(300, len(scores) * 50), coloraxis_showscale=False, yaxis=dict(autorange="reversed"))
-st.plotly_chart(rank_fig, use_container_width=True)
+st.plotly_chart(rank_fig, width="stretch")
 
 st.divider()
 
@@ -130,7 +130,7 @@ col_csv, col_excel = st.columns(2)
 
 with col_csv:
     csv_bytes = df.to_csv(index=False).encode("utf-8")
-    st.download_button("Download CSV", csv_bytes, file_name=f"{jd.title}_rankings.csv", mime="text/csv", use_container_width=True)
+    st.download_button("Download CSV", csv_bytes, file_name=f"{jd.title}_rankings.csv", mime="text/csv", width="stretch")
 
 with col_excel:
     excel_buf = io.BytesIO()
@@ -138,4 +138,4 @@ with col_excel:
         df.to_excel(writer, index=False, sheet_name="Rankings")
     excel_bytes = excel_buf.getvalue()
     st.download_button("Download Excel", excel_bytes, file_name=f"{jd.title}_rankings.xlsx",
-                       mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
+                       mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", width="stretch")

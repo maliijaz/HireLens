@@ -104,7 +104,7 @@ else:
                 title="Average Candidate Score by Name Group",
             )
             bar_fig.update_layout(coloraxis_showscale=False, height=350)
-            st.plotly_chart(bar_fig, use_container_width=True)
+            st.plotly_chart(bar_fig, width="stretch")
 
         if fairness.groups_detected:
             with st.expander("See candidate name classifications"):

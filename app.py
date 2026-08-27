@@ -34,7 +34,7 @@ with st.sidebar:
         for s in sessions:
             col1, col2 = st.columns([3, 1])
             with col1:
-                if st.button(f"📂 {s['session_name']}", key=f"load_{s['session_id']}", use_container_width=True):
+                if st.button(f"📂 {s['session_name']}", key=f"load_{s['session_id']}", width="stretch"):
                     session = load_session(s["session_id"])
                     if session:
                         st.session_state.jd = session.jd
