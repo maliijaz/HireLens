@@ -1,4 +1,4 @@
-# AI Hiring Assistant
+# HireLens
 
 An end-to-end AI-powered tool that helps hiring teams make faster, fairer shortlisting decisions. Built with Python, Streamlit, and the Groq API (free tier).
 

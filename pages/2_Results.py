@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 import streamlit as st
 
-st.set_page_config(page_title="Results — AI Hiring Assistant", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Results — HireLens", page_icon="📊", layout="wide")
 st.title("Candidate Rankings")
 
 if not st.session_state.get("scores"):

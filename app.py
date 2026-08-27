@@ -6,7 +6,7 @@ load_dotenv()
 init_db()
 
 st.set_page_config(
-    page_title="AI Hiring Assistant",
+    page_title="HireLens",
     page_icon="🎯",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -23,7 +23,7 @@ if "fairness" not in st.session_state:
 
 # ── Sidebar: session history ──────────────────────────────────────────────────
 with st.sidebar:
-    st.title("AI Hiring Assistant")
+    st.title("HireLens")
     st.caption("Powered by Groq (GPT-OSS) + sklearn")
     st.divider()
 
@@ -51,7 +51,7 @@ with st.sidebar:
         st.caption("No saved sessions yet. Upload a JD and resumes to get started.")
 
 # ── Home page ─────────────────────────────────────────────────────────────────
-st.title("AI Hiring Assistant")
+st.title("HireLens")
 st.markdown(
     """
     An end-to-end AI-powered tool that helps hiring teams make faster, fairer shortlisting decisions.

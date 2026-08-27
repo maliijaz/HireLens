@@ -2,7 +2,7 @@ import re
 import plotly.express as px
 import streamlit as st
 
-st.set_page_config(page_title="Bias Audit — AI Hiring Assistant", page_icon="⚖️", layout="wide")
+st.set_page_config(page_title="Bias Audit — HireLens", page_icon="⚖️", layout="wide")
 st.title("Bias Audit Report")
 
 st.info(

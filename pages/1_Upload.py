@@ -13,7 +13,7 @@ from src.database import init_db, save_session
 # surfaced to the user as a friendly message instead of a raw traceback.
 PIPELINE_ERRORS = (GroqError, json.JSONDecodeError, KeyError, ValueError, ValidationError)
 
-st.set_page_config(page_title="Upload — AI Hiring Assistant", page_icon="📤", layout="wide")
+st.set_page_config(page_title="Upload — HireLens", page_icon="📤", layout="wide")
 st.title("Upload Job Description & Resumes")
 
 init_db()

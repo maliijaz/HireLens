@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for considering a contribution to AI Hiring Assistant.
+Thanks for considering a contribution to HireLens.
 
 ## Local setup
 
