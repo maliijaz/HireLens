@@ -18,9 +18,23 @@ st.title("Upload Job Description & Resumes")
 
 init_db()
 
-api_key = os.getenv("GROQ_API_KEY", "")
+
+def _get_api_key() -> str:
+    key = os.getenv("GROQ_API_KEY", "")
+    if key:
+        return key
+    try:
+        return st.secrets.get("GROQ_API_KEY", "")
+    except Exception:
+        return ""
+
+
+api_key = _get_api_key()
 if not api_key:
-    st.error("GROQ_API_KEY not found. Create a `.env` file with your key (see `.env.example`).")
+    st.error(
+        "GROQ_API_KEY not found. For local development, create a `.env` file with your "
+        "key (see `.env.example`). For a deployed app, add it under the app's Secrets settings."
+    )
     st.stop()
 
 client = Groq(api_key=api_key)
