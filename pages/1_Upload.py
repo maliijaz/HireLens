@@ -29,8 +29,8 @@ client = Groq(api_key=api_key)
 with st.expander("⚙️ Settings", expanded=False):
     model_choice = st.selectbox(
         "Scoring model",
-        ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
-        help="70B gives higher quality scores; 8B is faster with lower rate limits.",
+        ["openai/gpt-oss-120b", "openai/gpt-oss-20b"],
+        help="120b gives higher quality scores; 20b is faster with lower rate limits.",
     )
     session_name = st.text_input("Session name", value="My Hiring Session", max_chars=60)
 

@@ -67,7 +67,7 @@ def score_candidate(
     resume: Resume,
     tfidf_score: float,
     client: Groq,
-    model: str = "llama-3.3-70b-versatile",
+    model: str = "openai/gpt-oss-120b",
 ) -> CandidateScore:
     system_prompt = _build_system_prompt(jd)
 
@@ -119,7 +119,7 @@ def score_all_candidates(
     resumes: list[Resume],
     tfidf_scores: list[float],
     client: Groq,
-    model: str = "llama-3.3-70b-versatile",
+    model: str = "openai/gpt-oss-120b",
     progress_callback=None,
 ) -> list[CandidateScore]:
     results = []

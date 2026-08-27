@@ -37,7 +37,7 @@ def parse_pdf(file_bytes: bytes) -> str:
 
 def parse_job_description(text: str, client: Groq) -> JobDescription:
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="openai/gpt-oss-20b",
         max_tokens=1024,
         response_format={"type": "json_object"},
         messages=[
@@ -52,7 +52,7 @@ def parse_job_description(text: str, client: Groq) -> JobDescription:
 def parse_resume(file_bytes: bytes, filename: str, client: Groq) -> Resume:
     text = parse_pdf(file_bytes)
     response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
+        model="openai/gpt-oss-20b",
         max_tokens=1024,
         response_format={"type": "json_object"},
         messages=[

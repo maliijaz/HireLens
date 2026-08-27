@@ -6,7 +6,7 @@ This project is open source under the [MIT License](LICENSE) — contributions a
 
 ## Features
 
-- **Hybrid ML + LLM scoring** — TF-IDF keyword matching (scikit-learn) combined with Llama 3 semantic scoring (via Groq) for robust, explainable rankings
+- **Hybrid ML + LLM scoring** — TF-IDF keyword matching (scikit-learn) combined with GPT-OSS semantic scoring (via Groq) for robust, explainable rankings
 - **Structured extraction** — LLM parses job descriptions and resumes into structured data automatically
 - **Multi-dimension scoring** — Skills, Experience, Education scored separately with full reasoning
 - **Bias audit** — Flags exclusionary/gendered language in job descriptions and checks score fairness across name-associated demographic groups
@@ -52,9 +52,9 @@ streamlit run app.py
 │   └── 3_Bias_Audit.py      # JD language audit + score fairness check
 ├── src/
 │   ├── models.py            # Pydantic data models
-│   ├── parsers.py           # PDF parsing + Groq (Llama 3) structured extraction
+│   ├── parsers.py           # PDF parsing + Groq (GPT-OSS) structured extraction
 │   ├── ml_scorer.py         # TF-IDF cosine similarity baseline
-│   ├── llm_scorer.py        # Groq (Llama 3) API scoring
+│   ├── llm_scorer.py        # Groq (GPT-OSS) API scoring
 │   ├── bias_detector.py     # Bias wordlist + statistical fairness test
 │   └── database.py          # SQLite session CRUD
 ├── requirements.txt
@@ -65,11 +65,11 @@ streamlit run app.py
 
 ### Fast, Free-Tier Inference
 
-Scoring calls run against Groq's LPU-based API using Llama 3 models (`llama-3.3-70b-versatile` for scoring quality, `llama-3.1-8b-instant` for fast structured extraction), which keeps a full batch analysis fast and free-tier friendly.
+Scoring calls run against Groq's LPU-based API using OpenAI's open-weight GPT-OSS models (`openai/gpt-oss-120b` for scoring quality, `openai/gpt-oss-20b` for fast structured extraction), which keeps a full batch analysis fast and free-tier friendly.
 
 ### Bias Detection
 
-- **JD Language Audit:** Checks for masculine-coded words (Gaucher et al., 2011) and exclusionary phrasing, then uses Llama 3 (via Groq) for nuanced tone assessment
+- **JD Language Audit:** Checks for masculine-coded words (Gaucher et al., 2011) and exclusionary phrasing, then uses GPT-OSS (via Groq) for nuanced tone assessment
 - **Score Fairness:** Uses Welch's t-test to detect statistically significant score disparity between name-associated demographic groups (Bertrand & Mullainathan, 2004)
 
 ### Hybrid Scoring Rationale
