@@ -2,6 +2,8 @@
 
 An end-to-end AI-powered tool that helps hiring teams make faster, fairer shortlisting decisions. Built with Python, Streamlit, and the Groq API (free tier).
 
+**Live demo:** [hirelens-assistant.streamlit.app](https://hirelens-assistant.streamlit.app/) *(hosted on Streamlit Community Cloud's free tier — the app sleeps after inactivity, so the first load may take a few seconds to wake up)*
+
 This project is open source under the [MIT License](LICENSE) — contributions are welcome.
 
 ## Features
