@@ -87,6 +87,7 @@ def score_candidate(
     response = client.chat.completions.create(
         model=model,
         max_tokens=1024,
+        reasoning_effort="low",
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": system_prompt},

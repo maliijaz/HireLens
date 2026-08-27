@@ -39,6 +39,7 @@ def parse_job_description(text: str, client: Groq) -> JobDescription:
     response = client.chat.completions.create(
         model="openai/gpt-oss-20b",
         max_tokens=1024,
+        reasoning_effort="low",
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": _JD_SYSTEM},
@@ -54,6 +55,7 @@ def parse_resume(file_bytes: bytes, filename: str, client: Groq) -> Resume:
     response = client.chat.completions.create(
         model="openai/gpt-oss-20b",
         max_tokens=1024,
+        reasoning_effort="low",
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": _RESUME_SYSTEM},

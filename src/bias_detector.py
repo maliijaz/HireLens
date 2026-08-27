@@ -74,6 +74,7 @@ Job description:
     response = client.chat.completions.create(
         model="openai/gpt-oss-20b",
         max_tokens=512,
+        reasoning_effort="low",
         response_format={"type": "json_object"},
         messages=[{"role": "user", "content": llm_prompt}],
     )
